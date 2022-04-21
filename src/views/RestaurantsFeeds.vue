@@ -14,6 +14,7 @@
       <div class="col-md-6">
         <!-- 最新評論 NewestComments-->
         <h3>最新評論</h3>
+        <NewestComments :comments="comments" />
       </div>
     </div>
   </div>
@@ -23,7 +24,8 @@
 // ./src/vuews/RestaurantsFeeds.vue
 <script>
 import NavTabs from "./../components/NavTabs";
-import NewestRestaurants from "./../components/NewestRestaurants";
+import NewestRestaurants from "../components/NewestRestaurants";
+import NewestComments from "../components/NewestComments";
 
 //  dummyData 此處用來代替 去伺服器抓資料的動作
 const dummyData = {
@@ -579,6 +581,7 @@ export default {
   components: {
     NavTabs,
     NewestRestaurants,
+    NewestComments,
   },
   data() {
     return {
