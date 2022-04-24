@@ -43,6 +43,16 @@ const routes = [
     component: () => import('../views/UsersTop')
   },
   {
+    path: '/restaurants/:id',   //  "/:id"  這個寫法表示 為動態 路由
+    name: 'restaurant',
+    component: () => import('../views/Restaurant.vue')
+  },
+  {
+    path: '/restaurants/:id/dashboard',
+    name: 'restaurant-dashboard',
+    component: () => import('../views/RestaurantDashboard.vue')
+  },
+  {
     path: '*',
     name: 'not-found',
     component: NotFound,

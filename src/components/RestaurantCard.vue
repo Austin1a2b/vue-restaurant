@@ -11,7 +11,10 @@
       />
       <div class="card-body">
         <p class="card-text title-wrap">
-          <a href="#">{{ restaurant.name }}</a>
+          <router-link
+            :to="{ name: 'restaurant', params: { id: restaurant.id } }"
+            >{{ restaurant.name }}</router-link
+          >
         </p>
         <span class="badge badge-secondary">中式料理</span>
         <p class="card-text text-truncate">

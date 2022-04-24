@@ -5,7 +5,10 @@
     <div class="card-body">
       <div :key="restaurant.id" v-for="restaurant in restaurants">
         <h4>
-          <a href="#">{{ restaurant.name }} </a>
+          <router-link
+            :to="{ name: 'restaurant', params: { id: restaurant.id } }"
+            >{{ restaurant.name }}
+          </router-link>
           <small>{{
             restaurant.Category ? restaurant.Category.name : "未分類"
           }}</small>
@@ -13,7 +16,7 @@
         <p>
           {{ restaurant.description }}
         </p>
-        {{ restaurant.createdAt | formNow }}
+        {{ restaurant.createdAt | fromNow }}
         <hr />
       </div>
     </div>
@@ -28,23 +31,14 @@ small {
 
 
 <script>
-import moment from "moment";
+import { fromNowFilter } from "./../utils/mixins";
 
 export default {
+  mixins: [fromNowFilter],
   props: {
     restaurants: {
       type: Array,
       required: true,
-    },
-  },
-  filters: {
-    formNow(datetime) {
-      if (!datetime) {
-        return "---";
-      } else {
-        return moment(datetime).fromNow();
-        // moment().fromNow()  => 這是套件功能  "npm install moment@2.24.0"
-      }
     },
   },
 };

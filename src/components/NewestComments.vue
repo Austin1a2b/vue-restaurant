@@ -4,21 +4,27 @@
     <div class="card-body">
       <div :Key="comment.id" v-for="comment in comments">
         <h4>
-          <a href="#"> {{ comment.Restaurant.name }} </a>
+          <router-link
+            :to="{ name: 'restaurant', params: { id: comment.Restaurant.id } }"
+          >
+            {{ comment.Restaurant.name }}
+          </router-link>
         </h4>
         <p>{{ comment.text }}</p>
         by
         <a href="#"> {{ comment.User.name }}</a>
-        at 3 days ago
+        {{ comment.User.updatedAt | fromNow }}
         <hr />
       </div>
     </div>
   </div>
 </template>
 
-
 <script>
+import { fromNowFilter } from "./../utils/mixins";
+
 export default {
+  mixins: [fromNowFilter],
   props: {
     comments: {
       type: Array,
