@@ -37,10 +37,16 @@ const routes = [
     name: 'restaurants-top',
     component: () => import('../views/RestaurantsTop.vue')
   },
+
   {
     path: '/users/top',
     name: 'user-top',
     component: () => import('../views/UsersTop')
+  },
+  {
+    path: '/users/:id',
+    name: 'users-page',
+    component: () => import('../views/User')
   },
   {
     path: '/restaurants/:id',   //  "/:id"  這個寫法表示 為動態 路由

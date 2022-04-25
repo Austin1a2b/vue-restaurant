@@ -172,7 +172,6 @@ export default {
       );
     },
     afterCreateComment(payload) {
-      console.log(payload);
       const { commentId, restaurantId, text } = payload;
       this.restaurantComments.push({
         id: commentId,
