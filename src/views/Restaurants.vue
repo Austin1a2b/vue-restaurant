@@ -1,4 +1,3 @@
-// ./src/views/Restaurants.vue
 <template>
   <div class="container py-5">
     <NavTabs />
@@ -21,7 +20,6 @@
       :nextPage="nextPage"
       :categoryId="categoryId"
     />
-    
   </div>
 </template>
 
