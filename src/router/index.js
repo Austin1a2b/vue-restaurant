@@ -73,7 +73,11 @@ const routes = [
     name: 'admin-categories',
     component: () => import('../views/AdminCategories.vue')
   },
-
+  {
+    path: '/admin/users',
+    name: 'admin-users',
+    component: () => import('../views/AdminUsers.vue')
+  },
   ///以下為動態路由
   {
     path: '/admin/restaurants/:id',
