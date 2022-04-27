@@ -44,6 +44,11 @@ const routes = [
     component: () => import('../views/UsersTop')
   },
   {
+    path: '/users/:id/edit',
+    name: 'users-edit',
+    component: () => import('../views/UserEdit')
+  },
+  {
     path: '/users/:id',
     name: 'users-page',
     component: () => import('../views/User')
@@ -63,7 +68,11 @@ const routes = [
     name: 'admin-restaurant-new',
     component: () => import('../views/AdminRestaurantNew.vue')
   },
-
+  {
+    path: '/admin/categories',
+    name: 'admin-categories',
+    component: () => import('../views/AdminCategories.vue')
+  },
 
   ///以下為動態路由
   {

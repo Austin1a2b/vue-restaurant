@@ -1296,7 +1296,7 @@ const dummyData = {
 
 const dummyUser = {
   currentUser: {
-    id: 99,
+    id: 9,
     name: "管理者",
     email: "root@example.com",
     image: "https://i.pravatar.cc/300",
@@ -1372,7 +1372,7 @@ export default {
   },
   created() {
     //後續 網頁id值 可帶入
-    // const id = this.$route.params;
+    // const {id} = this.$route.params;
     this.fetchData();
   },
 };

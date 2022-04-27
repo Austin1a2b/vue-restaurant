@@ -1,8 +1,9 @@
 <template>
   <div class="container py-5">
-    <AdminRestaurantForm 
-    :initial-restaurant="restaurant"
-    @after-submit="handleAfterSubmit" />
+    <AdminRestaurantForm
+      :initial-restaurant="restaurant"
+      @after-submit="handleAfterSubmit"
+    />
   </div>
 </template>
 
@@ -64,7 +65,7 @@ export default {
     },
   },
   created() {
-    const id = this.$route.params;
+    const { id } = this.$route.params;
     this.fetchRestaurant(id);
   },
 };

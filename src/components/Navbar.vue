@@ -28,11 +28,7 @@
 
         <!-- is user is login -->
         <template>
-          <router-link
-            v-if="currentUser.isAuthenticated"
-            to="#"
-            class="text-white mr-3"
-          >
+          <router-link v-if="isAuthenticated" to="#" class="text-white mr-3">
             {{ currentUser.name || "使用者" }} 您好
           </router-link>
           <button

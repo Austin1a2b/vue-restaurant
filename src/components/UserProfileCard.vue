@@ -28,7 +28,12 @@
         </ul>
 
         <template v-if="currentUser.id === profile.id">
-          <router-link to="#" class="btn btn-primary"> Edit </router-link>
+          <router-link
+            :to="{ name: 'users-edit', params: { id: currentUser.id } }"
+            class="btn btn-primary"
+          >
+            Edit
+          </router-link>
         </template>
         <template v-else>
           <button
