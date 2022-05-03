@@ -52,9 +52,6 @@ export default {
   },
   created() {
     const { page = "", categoryId = "" } = this.$route.query;
-    let { id: id } = this.$route.params;
-    console.log(this.$route.query);
-    console.log(id);
     this.fetchRestaurants({ queryPage: page, queryCategoryId: categoryId });
   },
   beforeRouteUpdate(to, from, next) {
@@ -70,7 +67,9 @@ export default {
           page: queryPage,
           categoryId: queryCategoryId,
         });
-
+        if (response.statusText === "OK") {
+          throw new Error(response.statusText);
+        }
         const {
           restaurants,
           categories,
@@ -89,7 +88,6 @@ export default {
         this.previousPage = prev;
         this.nextPage = next;
       } catch (error) {
-        console.log("error", error);
         Toast.fire({
           icon: "error",
           title: "無法取得餐廳資料，請稍後再試",
