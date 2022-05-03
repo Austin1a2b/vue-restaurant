@@ -34,7 +34,11 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">
+      <button
+        :disabled="isProcessing"
+        class="btn btn-lg btn-primary btn-block mb-3"
+        type="submit"
+      >
         Submit
       </button>
 
@@ -59,6 +63,7 @@ export default {
     return {
       email: "",
       password: "",
+      isProcessing: false,
     };
   },
   methods: {
@@ -72,7 +77,7 @@ export default {
         });
         return;
       }
-
+      this.isProcessing = true;
       authorizationAPI
         .signIn({
           email: this.email,
@@ -92,11 +97,13 @@ export default {
         .catch((error) => {
           // 將密碼欄位清空
           this.password = "";
+
           // 顯示錯誤提示
           Toast.fire({
             icon: "warning",
             title: "請確認您輸入了正確的帳號密碼",
           });
+          this.isProcessing = false;
           console.log("error", error);
         });
     },
