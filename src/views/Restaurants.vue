@@ -67,7 +67,7 @@ export default {
           page: queryPage,
           categoryId: queryCategoryId,
         });
-        if (response.statusText === "OK") {
+        if (response.statusText !== "OK") {
           throw new Error(response.statusText);
         }
         const {
