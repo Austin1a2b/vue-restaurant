@@ -157,7 +157,6 @@ export default {
     },
     handleFileChange(e) {
       const { files } = e.target;
-
       if (files.length === 0) {
         // 使用者沒有選擇上傳的檔案
         this.restaurant.image = "";
@@ -181,7 +180,6 @@ export default {
         });
         return;
       }
-
       const form = e.target; // <form></form>
       const formData = new FormData(form);
       this.$emit("after-submit", formData);
