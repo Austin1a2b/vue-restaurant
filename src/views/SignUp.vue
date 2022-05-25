@@ -113,15 +113,18 @@ export default {
           this.passwordCheck = "";
           return;
         }
-        const { data } = await authorizationAPI.signUp({
+        const response = await authorizationAPI.signUp({
           name: this.name,
           email: this.email,
           password: this.password,
           passwordCheck: this.passwordCheck,
         });
+        const { data } = response;
+        console.log(response);
         if (data.status === "error") {
           throw new Error(data.message);
         }
+
         Toast.fire({
           icon: "success",
           title: data.message,

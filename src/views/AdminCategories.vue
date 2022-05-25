@@ -1,7 +1,6 @@
 // ./src/views/AdminCategories.vue
 <template>
   <div class="container py-5">
-    <!-- 1. 使用先前寫好的 AdminNav -->
     <AdminNav />
 
     <form class="my-4">
@@ -91,37 +90,9 @@
 
 <script>
 import AdminNav from "@/components/AdminNav";
-import { v4 as uuidv4 } from "uuid";
-
-//  2. 定義暫時使用的資料
-const dummyData = {
-  categories: [
-    {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 2,
-      name: "日本料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 3,
-      name: "義大利料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-    {
-      id: 4,
-      name: "墨西哥料理",
-      createdAt: "2019-06-22T09:00:43.000Z",
-      updatedAt: "2019-06-22T09:00:43.000Z",
-    },
-  ],
-};
+// import { v4 as uuidv4 } from "uuid";
+import adminAPI from "./../apis/admin";
+import { Toast } from "./../utils/helpers";
 
 export default {
   components: {
@@ -134,32 +105,71 @@ export default {
       newCategoryName: "",
     };
   },
-  // 5. 調用 `fetchCategories` 方法
   created() {
     this.fetchCategories();
   },
   methods: {
-    // 4. 定義 `fetchCategories` 方法，把 `dummyData` 帶入 Vue 物件
-    fetchCategories() {
-      this.categories = dummyData.categories.map((category) => {
-        return {
-          ...category,
-          isEditing: false,
-          nameCached: "",
-        };
-      });
+    async fetchCategories() {
+      try {
+        const response = await adminAPI.categories.get();
+        const statusText = response.statusText;
+        if (statusText !== "OK") {
+          throw new Error(statusText);
+        }
+        this.categories = response.data.categories.map((category) => {
+          return {
+            ...category,
+            isEditing: false,
+            nameCached: "",
+          };
+        });
+      } catch (error) {
+        Toast.fire({
+          type: "error",
+          title: "無法取得餐廳類別，請稍後再試",
+        });
+      }
     },
-    createCategory() {
-      this.categories.push({
-        id: uuidv4(),
-        name: this.newCategoryName,
-      });
+    async createCategory() {
+      try {
+        const response = await adminAPI.categories.create({
+          name: this.newCategoryName,
+        });
+        console.log(response);
+        const statusText = response.statusText;
+        if (statusText !== "OK") {
+          throw new Error(statusText);
+        }
+        const categoryId = response.data.categoryId;
+        this.categories.push({
+          name: this.newCategoryName,
+          id: categoryId,
+        });
+      } catch {
+        Toast.fire({
+          type: "error",
+          title: "新增失敗，請稍後再試",
+        });
+      }
       this.newCategoryName = ""; // 清空原本欄位中的內容
     },
-    deleteCategory(categoryId) {
-      this.categories = this.categories.filter((category) => {
-        return categoryId !== category.id;
-      });
+    async deleteCategory(categoryId) {
+      try {
+        const response = await adminAPI.categories.delete(categoryId);
+        console.log(response);
+        this.categories = this.categories.filter((category) => {
+          return categoryId !== category.id;
+        });
+        const statusText = response.statusText;
+        if (statusText !== "OK") {
+          throw new Error(statusText);
+        }
+      } catch {
+        Toast.fire({
+          type: "error",
+          title: "新增失敗，請稍後再試",
+        });
+      }
     },
     toggleIsEditing(categoryId) {
       this.categories = this.categories.map((category) => {
@@ -171,14 +181,22 @@ export default {
           };
         }
         return category;
-      });    
+      });
     },
-
-    
-    updateCategory({ categoryId, name }) {
-      // TODO: 透過 API 去向伺服器更新餐廳類別名稱
-      this.toggleIsEditing(categoryId);
-      console.log(name);
+    async updateCategory({ categoryId, name }) {
+      try {
+        const response = await adminAPI.categories.update({
+          categoryId: categoryId,
+          name: name,
+        });
+        console.log(response);
+        this.toggleIsEditing(categoryId);
+      } catch {
+        Toast.fire({
+          type: "error",
+          title: "修改失敗，請稍後再試",
+        });
+      }
     },
     handleCancel(categoryId) {
       this.categories = this.categories.filter((category) => {
