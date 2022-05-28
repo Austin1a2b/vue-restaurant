@@ -21,8 +21,7 @@
 
 
 <script>
-import { v4 as uuidv4 } from "uuid";
-// 尚未設定伺服器 這邊的uuid 是給新增留言 綁定一個id 值
+import restaurantsAPI from "./../apis/restaurants";
 
 export default {
   props: {
@@ -37,15 +36,27 @@ export default {
     };
   },
   methods: {
-    handleSubmit() {
-      // TODO: 向 API 發送 POST 請求
-      // 伺服器新增 Comment 成功後...
-      this.$emit("after-create-comment", {
-        commentId: uuidv4(), // 尚未串接 API 暫時使用隨機的 id
-        restaurantId: this.restaurantId,
-        text: this.text,
-      });
-      this.text = ""; // 將表單內的資料清空
+    async handleSubmit() {
+      try {
+        // TODO: 向 API 發送 POST 請求
+        const { data } = await restaurantsAPI.addRestaurantComment({
+          restaurantId: this.restaurantId,
+          text: this.text,
+        });
+
+        if (data.status === "error") {
+          throw new Error(data.message);
+        }
+        // 伺服器新增 Comment 成功後...
+        this.$emit("after-create-comment", {
+          commentId: data.commentId,
+          restaurantId: this.restaurantId,
+          text: this.text,
+        });
+        this.text = ""; // 將表單內的資料清空
+      } catch (error) {
+        console.error(error);
+      }
     },
   },
 };

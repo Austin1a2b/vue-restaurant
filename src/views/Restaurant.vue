@@ -22,103 +22,9 @@
 import RestaurantDetail from "../components/RestaurantDetail";
 import RestaurantComments from "../components/RestaurantComments";
 import CreateComment from "../components/CreateComment";
-
-const dummyData = {
-  restaurant: {
-    id: 1,
-    name: "Ned Trantow",
-    tel: "670-353-6941 x75169",
-    address: "234 Abernathy Forge",
-    opening_hours: "08:00",
-    description: "quia",
-    image:
-      "https://loremflickr.com/320/240/restaurant,food/?random=42.06157333984635",
-    viewCounts: 1,
-    createdAt: "2022-04-21T06:55:38.000Z",
-    updatedAt: "2022-04-23T10:00:06.215Z",
-    CategoryId: 1,
-    Category: {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2022-04-21T06:55:38.000Z",
-      updatedAt: "2022-04-21T06:55:38.000Z",
-    },
-    FavoritedUsers: [],
-    LikedUsers: [],
-    Comments: [
-      {
-        id: 101,
-        text: "Inventore corporis fugit eveniet ab autem quia eum.",
-        UserId: 1,
-        RestaurantId: 1,
-        createdAt: "2022-04-21T06:55:38.000Z",
-        updatedAt: "2022-04-21T06:55:38.000Z",
-        User: {
-          id: 1,
-          name: "root",
-          email: "root@example.com",
-          password:
-            "$2a$10$5ZuIWPJga1gF67fHHgww/uT1BJLXeHhvndOVI554btHhy.e4iRkWC",
-          isAdmin: true,
-          image: null,
-          createdAt: "2022-04-21T06:55:38.000Z",
-          updatedAt: "2022-04-21T06:55:38.000Z",
-        },
-      },
-      {
-        id: 1,
-        text: "Qui quae et ut nulla.",
-        UserId: 3,
-        RestaurantId: 1,
-        createdAt: "2022-04-21T06:55:38.000Z",
-        updatedAt: "2022-04-21T06:55:38.000Z",
-        User: {
-          id: 3,
-          name: "user2",
-          email: "user2@example.com",
-          password:
-            "$2a$10$8pGBE8rq2UKJ.InOgUMP1ekkJmR30W13BOuzlcmbwypi6twsBjGcW",
-          isAdmin: false,
-          image: null,
-          createdAt: "2022-04-21T06:55:38.000Z",
-          updatedAt: "2022-04-21T06:55:38.000Z",
-        },
-      },
-      {
-        id: 51,
-        text: "Aspernatur cupiditate neque perspiciatis qui sapiente et recusandae.",
-        UserId: 3,
-        RestaurantId: 1,
-        createdAt: "2022-04-21T06:55:38.000Z",
-        updatedAt: "2022-04-21T06:55:38.000Z",
-        User: {
-          id: 3,
-          name: "user2",
-          email: "user2@example.com",
-          password:
-            "$2a$10$8pGBE8rq2UKJ.InOgUMP1ekkJmR30W13BOuzlcmbwypi6twsBjGcW",
-          isAdmin: false,
-          image: null,
-          createdAt: "2022-04-21T06:55:38.000Z",
-          updatedAt: "2022-04-21T06:55:38.000Z",
-        },
-      },
-    ],
-  },
-  isFavorited: false,
-  isLiked: false,
-};
-
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-};
+import restaurantsAPI from "./../apis/restaurants";
+import { Toast } from "./../utils/helpers";
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -140,39 +46,60 @@ export default {
         isFavorited: false,
         isLiked: false,
       },
-      currentUser: dummyUser.currentUser,
       restaurantComments: [],
     };
+  },
+  computed: {
+    ...mapState(["currentUser"]),
   },
   created() {
     const { id: restaurantId } = this.$route.params;
     this.fetchRestaurant(restaurantId);
   },
   methods: {
-    fetchRestaurant(restaurantId) {
-      console.log("fetchRestaurant id: ", restaurantId);
-      this.restaurant = {
-        id: dummyData.restaurant.id,
-        name: dummyData.restaurant.name,
-        categoryName: dummyData.restaurant.Category.name,
-        image: dummyData.restaurant.image,
-        openingHours: dummyData.restaurant.opening_hours,
-        tel: dummyData.restaurant.tel,
-        address: dummyData.restaurant.address,
-        description: dummyData.restaurant.description,
-        isFavorited: dummyData.isFavorited,
-        isLiked: dummyData.isLiked,
-      };
-      this.restaurantComments = dummyData.restaurant.Comments;
+    async fetchRestaurant(restaurantId) {
+      try {
+        const { data } = await restaurantsAPI.getRestaurant({ restaurantId });
+        const { restaurant, isFavorited, isLiked } = data;
+        const {
+          id,
+          name,
+          Category,
+          image,
+          opening_hours: openingHours,
+          tel,
+          address,
+          description,
+          Comments,
+        } = restaurant;
+        this.restaurant = {
+          id,
+          name,
+          categoryName: Category ? Category.name : "未分類",
+          image,
+          openingHours,
+          tel,
+          address,
+          description,
+          isFavorited,
+          isLiked,
+        };
+        this.restaurantComments = Comments;
+      } catch {
+        Toast.fire({
+          icon: "error",
+          title: "無法取得資料",
+        });
+      }
     },
     afterDeleteComment(commentId) {
-      // 以 filter 保留未被選擇的 comment.id
       this.restaurantComments = this.restaurantComments.filter(
         (comment) => comment.id !== commentId
       );
     },
-    afterCreateComment(payload) {
+    async afterCreateComment(payload) {
       const { commentId, restaurantId, text } = payload;
+      // const response = await restaurantsAPI.addRestaurantComment();
       this.restaurantComments.push({
         id: commentId,
         RestaurantId: restaurantId,
@@ -184,6 +111,11 @@ export default {
         createdAt: new Date(),
       });
     },
+  },
+  beforeRouteUpdate(to, from, next) {
+    const { id: restaurantId } = to.params;
+    this.fetchRestaurant(restaurantId);
+    next();
   },
 };
 </script>

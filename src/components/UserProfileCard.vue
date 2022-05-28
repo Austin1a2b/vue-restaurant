@@ -1,11 +1,7 @@
 <template>
   <div class="row no-gutters">
     <div class="col-md-4">
-      <img
-        src="https://i.imgur.com/1LW2zCB.jpeg"
-        width="300px"
-        height="300px"
-      />
+      <img :src="profile.image" width="300px" height="300px" />
     </div>
     <div class="col-md-8">
       <div class="card-body">
@@ -20,10 +16,10 @@
             收藏的餐廳
           </li>
           <li>
-            <strong>{{ followingsLength }}</strong> followings (追蹤者)
+            <strong>{{ profile.followingsLength }}</strong> followings (追蹤者)
           </li>
           <li>
-            <strong>{{ followers.length }}</strong> followers (追隨者)
+            <strong>{{ profile.followersLength }}</strong> followers (追隨者)
           </li>
         </ul>
 
@@ -39,7 +35,7 @@
           <button
             type="submit"
             v-if="isFollowed"
-            @click.prevent.stop="deleteFollowed()"
+            @click.prevent.stop="deleteFollowed(profile.id)"
             class="btn btn-danger"
           >
             取消追蹤
@@ -47,7 +43,7 @@
           <button
             type="submit"
             v-else
-            @click.prevent.stop="addFollowed()"
+            @click.prevent.stop="addFollowed(profile.id)"
             class="btn btn-primary"
           >
             追蹤
@@ -59,6 +55,9 @@
 </template>
 
 <script>
+import usersAPI from "./../apis/users";
+import { Toast } from "./../utils/helpers";
+
 export default {
   props: {
     profile: {
@@ -82,16 +81,39 @@ export default {
     return {
       currentUserId: "",
       profileId: this.profile.id,
-      followingsLength: this.profile.followingsLength,
     };
   },
   methods: {
-    deleteFollowed() {
-      this.$emit("after-delete-followed", this.currentUser);
+    async deleteFollowed(userId) {
+      try {
+        const { data } = await usersAPI.deleteFollowing({ userId });
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.$emit("after-delete-followed", this.currentUser);
+      } catch (error) {
+        Toast.fire({
+          icon: "error",
+          title: "無法刪除追蹤",
+        });
+      }
     },
-    addFollowed() {
-      this.$emit("after-add-followed", this.currentUser);
+    async addFollowed(userId) {
+      try {
+        const { data } = await usersAPI.addFollowing({ userId });
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.$emit("after-add-followed", this.currentUser);
+      } catch (error) {
+        console.log(error);
+        Toast.fire({
+          icon: "error",
+          title: "無法加到追蹤",
+        });
+      }
     },
   },
+  // watch
 };
 </script>

@@ -12,15 +12,15 @@
         class="col-3"
       >
         <a href="#">
-          <img
-            src="http://via.placeholder.com/300x300?text=No+Image"
-            width="140px"
-            height="140px"
-          />
+          <router-link :to="'/users/' + user.id">
+            <img :src="user.image" width="140px" height="140px" />
+          </router-link>
         </a>
-        <h2>{{ user.name }}</h2>
+        <router-link :to="'/users/' + user.id">
+          <h2>{{ user.name }}</h2>
+        </router-link>
         <span class="badge badge-secondary"
-          >追蹤人數：{{ user.FollowerCount }}</span
+          >追蹤人數：{{ user.followerCount }}</span
         >
         <p class="mt-3">
           <button
@@ -67,10 +67,13 @@ export default {
     async fetchUsers() {
       try {
         const { data } = await usersAPI.getTopUsers();
+        console.log(data);
         this.users = data.users.map((user) => ({
           id: user.id,
           name: user.name,
-          image: user.image,
+          image:
+            user.image ||
+            "http://t0.gstatic.com/licensed-image?q=tbn:ANd9GcT6UdRbcbzqWG2-B2DgnxnTbup_lMM9sHFrv_7R6yUKa9313uftaYlHPzucRQRf-ObTESz2FAv2DDSnn93TfoI",
           followerCount: user.FollowerCount,
           isFollowed: user.isFollowed,
         }));

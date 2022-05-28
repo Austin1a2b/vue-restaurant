@@ -92,6 +92,10 @@ export default {
         }
         // 將 token 存放在 localStorage 內
         localStorage.setItem("token", data.token);
+
+        //將資料 存到 vuex中
+        this.$store.commit("setCurrentUser", data.user);
+
         // 成功登入後轉址到餐廳首頁
         this.$router.push("/restaurants");
       } catch (error) {

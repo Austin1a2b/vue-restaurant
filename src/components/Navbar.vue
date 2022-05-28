@@ -34,6 +34,7 @@
           <button
             type="button"
             class="btn btn-sm btn-outline-success my-2 my-sm-0"
+            @click="logout"
           >
             登出
           </button>
@@ -44,45 +45,17 @@
 </template>
 
 <script>
-// seed data
-// 假資料 => 這組資料是在串 API 之前，先模擬一組登入使用者
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-};
+import { mapState } from "vuex";
 
 export default {
-  // data 屬性裡的 currentUser，這是在使用者未登入的情況下，Navbar 預設的空資料，他的登入狀態是 false，一旦接受到外部資料，這組 currentUser 就會被覆寫。 =>
-  //   應該是說  要用在 網頁互動的資料 ; 也就是 設計 網頁結構 用的 資料
-  data() {
-    return {
-      currentUser: {
-        id: -1,
-        name: "",
-        email: "",
-        image: "",
-        isAdmin: false,
-      },
-      isAuthenticated: false,
-    };
-  },
   methods: {
-    fetchUser() {
-      this.currentUser = {
-        ...this.currentUser,
-        ...dummyUser.currentUser,
-      };
-      this.isAuthenticated = dummyUser.isAuthenticated;
+    logout() {
+      this.$store.commit("revokeAuthentication");
+      this.$router.push("/signin");
     },
   },
-  created() {
-    this.fetchUser();
+  computed: {
+    ...mapState(["currentUser", "isAuthenticated"]),
   },
 };
 
