@@ -9,7 +9,13 @@ export default {
     })
   },
   get({ userId }) {
+    console.log('api - id', userId)
     return apiHelper.get(`/users/${userId}`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+  update({ userId, formData }) {
+    return apiHelper.put(`/users/${userId}`, formData, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })
   },

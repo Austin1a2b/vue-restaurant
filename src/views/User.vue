@@ -5,7 +5,7 @@
       <UserProfileCard
         :profile="profile"
         :currentUser="currentUser"
-        :isFollowed="isFollowed"
+        :initial-is-followed="isFollowed"
         :followers="followers"
         @after-add-followed="afterAddFollowed"
         @after-delete-followed="afterDeleteFollowed"
@@ -65,7 +65,7 @@ export default {
       favoritedRestaurants: [],
       followers: [],
       followings: [],
-      isFollowed: null,
+      isFollowed: false,
     };
   },
   methods: {
@@ -115,6 +115,11 @@ export default {
     const { id } = this.$route.params;
     console.log(id);
     this.fetchData(id);
+  },
+  beforeRouteUpdate(to, from, next) {
+    const { id } = to.params;
+    this.fetchData(id);
+    next();
   },
 };
 </script>

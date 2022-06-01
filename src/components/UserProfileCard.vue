@@ -68,7 +68,7 @@ export default {
       type: Object,
       required: true,
     },
-    isFollowed: {
+    initialIsFollowed: {
       type: Boolean,
       required: true,
     },
@@ -79,8 +79,7 @@ export default {
   },
   data() {
     return {
-      currentUserId: "",
-      profileId: this.profile.id,
+      isFollowed: this.initialIsFollowed,
     };
   },
   methods: {
@@ -114,6 +113,10 @@ export default {
       }
     },
   },
-  // watch
+  watch: {
+    initialIsFollowed(isFollowed) {
+      this.isFollowed = isFollowed;
+    },
+  },
 };
 </script>
