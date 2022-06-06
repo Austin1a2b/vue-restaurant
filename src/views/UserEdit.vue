@@ -54,12 +54,7 @@ export default {
     };
   },
   methods: {
-    setUser(id) {
-      if (id.toString() !== this.currentUser.id.toString()) {
-        console.log(id);
-        console.log(this.currentUser.id);
-        this.$router.push("/restaurants");
-      }
+    setUser() {
       this.id = this.currentUser.id;
       this.name = this.currentUser.name;
       this.image =
@@ -105,6 +100,10 @@ export default {
     },
   },
   created() {
+    if (id.toString() !== this.currentUser.id.toString()) {
+      this.$router.push({ name: "not-found" });
+      return;
+    }
     const { id } = this.$route.params;
     this.setUser(id);
   },

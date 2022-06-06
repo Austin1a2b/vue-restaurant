@@ -18,7 +18,9 @@
           <td>{{ user.isAdmin | showRole }}</td>
           <td>
             <button
-              @click.prevent.stop="toggleUserRole(user.id)"
+              @click.prevent.stop="
+                toggleUserRole({ userId: user.id, isAdmin: user.isAdmin })
+              "
               v-if="!(currentUser.id === user.id && user.isAdmin)"
               type="button"
               class="btn btn-link"
@@ -34,89 +36,72 @@
 
 <script>
 import AdminNav from "../components/AdminNav";
-
-const dummyData = {
-  users: [
-    {
-      id: 1,
-      name: "root",
-      email: "root@example.com",
-      password: "$2a$10$5ZuIWPJga1gF67fHHgww/uT1BJLXeHhvndOVI554btHhy.e4iRkWC",
-      isAdmin: true,
-      image: null,
-      createdAt: "2022-04-21T06:55:38.000Z",
-      updatedAt: "2022-04-21T06:55:38.000Z",
-    },
-    {
-      id: 2,
-      name: "user1",
-      email: "user1@example.com",
-      password: "$2a$10$3Kgdc5ZwrYVooBuy.53ePeTBzUCAocqO.TK1OwUoQ.neIiBfZj4.y",
-      isAdmin: false,
-      image: null,
-      createdAt: "2022-04-21T06:55:38.000Z",
-      updatedAt: "2022-04-21T06:55:38.000Z",
-    },
-    {
-      id: 3,
-      name: "user2",
-      email: "user2@example.com",
-      password: "$2a$10$8pGBE8rq2UKJ.InOgUMP1ekkJmR30W13BOuzlcmbwypi6twsBjGcW",
-      isAdmin: false,
-      image: null,
-      createdAt: "2022-04-21T06:55:38.000Z",
-      updatedAt: "2022-04-21T06:55:38.000Z",
-    },
-  ],
-};
-
-const dummyCurrentUser = {
-  profile: {
-    id: 1,
-    name: "root",
-    email: "root@example.com",
-    password: "$2a$10$5ZuIWPJga1gF67fHHgww/uT1BJLXeHhvndOVI554btHhy.e4iRkWC",
-    isAdmin: true,
-    image: null,
-  },
-};
+import adminAPI from "./../apis/admin";
+import { Toast } from "./../utils/helpers";
+import { mapState } from "vuex";
 
 export default {
+  computed: {
+    ...mapState(["currentUser"]),
+  },
   components: {
     AdminNav,
   },
   data() {
     return {
       users: [],
-      currentUser: {
-        id: "",
-        name: "",
-        isAdmin: "",
-      },
     };
   },
   methods: {
-    fetchData() {
-      this.users = dummyData.users;
-    },
-    fetchCurrentUser() {
-      this.currentUser = dummyCurrentUser.profile;
-    },
-    toggleUserRole(userId) {
-      this.users = this.users.map((user) => {
-        if (user.id === userId) {
-          return {
-            ...user,
-            isAdmin: !user.isAdmin,
-          };
+    async fetchData() {
+      try {
+        const response = await adminAPI.getAllUser();
+        console.log(response);
+        this.users = response.data.users;
+        if (response.statusText !== "OK") {
+          throw new Error(response.statusText);
         }
-        return user;
-      });
+      } catch {
+        Toast.fire({
+          icon: "error",
+          title: "無法取得 伺服器資料 , 請稍後在試",
+        });
+      }
+    },
+    async toggleUserRole({ userId, isAdmin }) {
+      try {
+        const willBeAdmin = !isAdmin;
+        console.log(willBeAdmin);
+        const response = await adminAPI.updateUser({
+          userId: userId,
+          isAdmin: willBeAdmin.toString(),
+        });
+        console.log(response);
+        if (
+          response.statusText !== "OK" ||
+          response.data.status !== "success"
+        ) {
+          throw new Error(response.statusText);
+        }
+        this.users = this.users.map((user) => {
+          if (user.id === userId) {
+            return {
+              ...user,
+              isAdmin: willBeAdmin,
+            };
+          }
+          return user;
+        });
+      } catch {
+        Toast.fire({
+          icon: "error",
+          title: "無法取得 伺服器資料 , 請稍後在試",
+        });
+      }
     },
   },
   created() {
     this.fetchData();
-    this.fetchCurrentUser();
   },
   filters: {
     showRole(isAdmin) {

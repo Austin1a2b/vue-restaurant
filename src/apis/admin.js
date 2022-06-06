@@ -2,6 +2,19 @@ import { apiHelper } from "../utils/helpers"
 const getToken = () => localStorage.getItem('token')
 
 export default {
+  getAllUser() {
+    return apiHelper.get('admin/users', {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+  updateUser({ userId, isAdmin }) {
+    console.log(userId);
+    console.log(isAdmin);
+    return apiHelper.put(`/admin/users/${userId}`, { isAdmin }, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    })
+  },
+
   categories: {
     get() {
       return apiHelper.get('/admin/categories', {
@@ -46,7 +59,5 @@ export default {
         headers: { Authorization: `Bearer ${getToken()}` }
       })
     },
-
   }
-
 }
