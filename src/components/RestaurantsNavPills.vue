@@ -7,7 +7,6 @@
         全部
       </router-link>
     </li>
-
     <li v-for="category in categories" :key="category.id" class="nav-item">
       <router-link
         class="nav-link"

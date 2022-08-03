@@ -2,7 +2,6 @@
 <template>
   <div class="container py-5">
     <AdminNav />
-
     <form class="my-4">
       <div class="form-row">
         <div class="col-auto">

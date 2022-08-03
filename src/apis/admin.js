@@ -8,8 +8,6 @@ export default {
     })
   },
   updateUser({ userId, isAdmin }) {
-    console.log(userId);
-    console.log(isAdmin);
     return apiHelper.put(`/admin/users/${userId}`, { isAdmin }, {
       headers: { Authorization: `Bearer ${getToken()}` }
     })

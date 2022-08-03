@@ -13,9 +13,11 @@ export default new Vuex.Store({
       image: '',
       isAdmin: false
     },
-    isAuthenticated: false
+    isAuthenticated: false,
+    token: '',
   },
-  // 在vue 用commit 可以發動 mutations
+  // 在vue 中  要使用 mutation 中的函式 - 
+  //this.$store.commit( ' mutation裡的函式名稱 ' ,  資料內容  )
   mutations: {
     setCurrentUser(state, currentUser) {
       state.currentUser = {
@@ -25,9 +27,16 @@ export default new Vuex.Store({
       }
       // 將使用者的登入狀態改為 true
       state.isAuthenticated = true
+      state.token = localStorage.getItem('token')
+    },
+    revokeAuthentication(state) {
+      state.currentUser = {}
+      state.isAuthenticated = false
+      localStorage.removeItem('token')
+      state.token = ''
     }
   },
-  // 在vue 用dispatch 可以發動 action
+  // 在 js 中 , 要呼叫 action , 
   actions: {
     async fetchCurrentUser({ commit }) {
       try {
@@ -35,9 +44,11 @@ export default new Vuex.Store({
         const { data } = await usersAPI.getCurrentUser()
         // const { id, name, image, isadmin } = data
         commit('setCurrentUser', data)
+        return true
       } catch (error) {
         console.log('error', error)
         console.error('can not fetch user information')
+        return false
       }
     },
   },
@@ -45,4 +56,5 @@ export default new Vuex.Store({
   },
   getters: {
   },
+
 })
