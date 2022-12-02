@@ -1,4 +1,3 @@
-// ./src/App.vue
 <template>
   <div id="restaurant-forum">
     <Navbar />
@@ -17,8 +16,13 @@ import Navbar from "./components/Navbar.vue";
 
 export default {
   components: {
-    Navbar: Navbar, 
+    Navbar: Navbar,
   },
 };
 </script>
 
+<style scoped>
+main {
+  margin-top: 65px !important;
+}
+</style>  
